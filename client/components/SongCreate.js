@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-
+import gql from "graphql-tag";
+import { graphql } from "react-apollo";
 class SongCreate extends Component {
   constructor(props) {
     super(props);
@@ -8,11 +9,21 @@ class SongCreate extends Component {
     };
   }
 
+  onSubmit(event) {
+    event.preventDefault();
+
+    this.props.mutate({
+      variables: {
+        title: this.state.title,
+      },
+    });
+  }
+
   render() {
     return (
       <div>
         <h3>Create a new song</h3>
-        <form>
+        <form onSubmit={this.onSubmit.bind(this)}>
           <label>Song Title:</label>
           <input
             type={"text"}
@@ -25,12 +36,21 @@ class SongCreate extends Component {
   }
 }
 
-export default SongCreate;
+const mutation = gql`
+  mutation AddSong($title: String) {
+    addSong(title: $title) {
+      title
+    }
+  }
+`;
 
-//export const SongCreate = () => {
+// wrapping React component with graphql, specifying the query (mutation) used
+export default graphql(mutation)(SongCreate);
+
 // NOTE: Cannot use React hooks as project is using v^15.4.2, hooks did not come in until v16.8
 // NOTE (^) means that we can accept minor releases and patch releases, but not a major release when updating our package
 
+//export const SongCreate = () => {
 // const [songTitle, setSongTitle] = React.useState("");
 
 //   return (

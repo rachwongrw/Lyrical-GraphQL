@@ -4,8 +4,6 @@ import { graphql } from "react-apollo";
 
 const SongList = (props) => {
   const { songs, loading } = props.data;
-  console.log("props?", props);
-
   if (loading) {
     return <div>Loading...</div>;
   }

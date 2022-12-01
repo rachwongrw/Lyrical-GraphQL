@@ -1,25 +1,29 @@
 import React, { Component } from "react";
-import { graphql } from "react-apollo";
 import { Link } from "react-router";
-import fetchSongs from "../queries/fetchSongs";
-
+import { graphql } from "react-apollo";
+import gql from "graphql-tag";
+import query from "../queries/fetchSongs";
 class SongList extends Component {
-  renderSongs() {
-    const { songs } = this.props.data;
+  onSongDelete(id) {
+    this.props
+      .mutate({ variables: { id } })
+      .then(() => this.props.data.refetch());
+  }
 
-    if (songs) {
-      return songs.map((song) => (
-        <li key={song.id} className="collection-item">
-          {song.title}
-        </li>
-      ));
-    }
-    return <div>no songs</div>;
+  renderSongs() {
+    return this.props.data.songs.map(({ id, title }) => (
+      <li className="collection-item" key={id} id={id}>
+        {title}
+        <i onClick={() => this.onSongDelete(id)} className="material-icons">
+          delete
+        </i>
+      </li>
+    ));
   }
 
   render() {
-    if (this.props.loading) {
-      return <div>...Loading...</div>;
+    if (!this.props.data.songs) {
+      return <div />;
     }
 
     return (
@@ -33,6 +37,19 @@ class SongList extends Component {
   }
 }
 
-export default graphql(fetchSongs)(SongList);
+const mutation = gql`
+  mutation DeleteSong($id: ID) {
+    deleteSong(id: $id) {
+      id
+    }
+  }
+`;
+
+export default graphql(mutation)(graphql(query)(SongList));
+// ^ how we can add multiple queries to one component
+
 // similar syntax to Redux. graphql(query) returns a fn which is immediately called by the second parentheses, (SongList).
 // The query is rendered when the component is rendered. Once query is complete, the component is rerendered
+
+// export default graphql(query)(SongList);
+// ^ this method can only take one query for one component

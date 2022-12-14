@@ -10,7 +10,12 @@ import SongCreate from "./components/SongCreate";
 import SongDetail from "./components/SongDetail";
 // ApolloClient - interacts with the graphQl backend. makes our request for data and then stores this data.
 
-const client = new ApolloClient({});
+const client = new ApolloClient({
+  // this identifies each piece of data inside the Apollo store
+  dataIdFromObject: (o) => o.id,
+  // ramifications of using this: we need to return/ask for the id for every query otherwise
+  // Apollo cannot identify the data
+});
 
 const Root = () => {
   return (

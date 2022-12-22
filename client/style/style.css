@@ -8,3 +8,11 @@
     cursor: pointer;
   }
   
+  .material-icons:hover {
+    color: cornflowerblue;
+  }
+
+  .vote-box {
+    display: flex;
+    align-items: center;
+  }
